@@ -393,8 +393,8 @@ def logout(request):
 * Sandbox con Docker (9, 13, 16 mayo)
   - Sandbox: ambiente de ejecución limitado, si se vulnera la
     aplicación dentro del sandbox, esto no afecta a las demás
-    aplicaciones del sistema. Ayuda a mitigar la post-explotación
-  - Docker: permite aislar cualquier sistema en un sandbox, mediante
+    aplicaciones del sistema. Ayuda a mitigar la post-explotación, sobre todo a escalar privilegios
+  - Docker, Podman (contendores): permite aislar cualquier sistema en un sandbox, mediante
     contenedores
     + Contenedor: es como una máquina virtual, la diferencia más
       importante es que no virtualiza el kernel. Se usa el mismo
@@ -419,13 +419,13 @@ def logout(request):
           + Reproducibilidad
             * Tiene que ver con tener pobre documentación
             * La migración se vuelve muy compleja
-            * El despliegue inicial es también muy complejo ya que requiere migrar de los sistemas de desarrollo a los sistemas de producción
+            * El despliegue inicial es también muy complejo ya que requiere migrar  los sistemas de desarrollo a los sistemas de producción
           + Escalabilidad
             * Significa ser capaz de dar servicio a un número creciente de usuarios
             * No es suficiente sólo comprar más hardware, se necesita que el software balancee la carga
-** Como los contenedores mitigan problemas de despliegue de software
+** Cómo los contenedores mitigan problemas de despliegue de software
 - Un sistema en cada contenedor con dependencias internas y de ambiente separadas: resuelve conflictos de dependencias y versiones
-- Al usar contenedores estás obligado a documentar lo que haces: al filosofía es automatizar todo por medio de scripts y configuraciones, los cuales sirven de documentación, detallando los pasos para hacer todo: mitigamos los problemas de reproducibilidad y migrar
+- Al usar contenedores estás obligado a documentar lo que haces: la filosofía es automatizar todo por medio de scripts y configuraciones, los cuales sirven de documentación, detallando los pasos para hacer todo: mitigamos los problemas de reproducibilidad y migrar
 - Al tener todo separado en contenedores independientes y al tener procesos automatizados se vuelve más sencillo agregar capas de clustering, ejemplos:  swarm, kubernetes: esto ayuda a facilitar la escalabilidad
 
 ** Conceptos básicos de contenedores 
@@ -438,9 +438,9 @@ def logout(request):
 - Es el proceso o conjunto de procesos que se crean a partir de una imagen
 - Está siendo gestionado por el OS anfitrión
 - Puede estar en tres estados:
-  + Corriendo
-  + Pausado
-  + Removido
+  + Corriendo: lo puedes pausar o detener
+  + Pausado: lo puedes reactivar (restart) o detener
+  + Detenido (terminado, por remover): lo puedes remover o reiniciar (restart)
 - Los contenedores son volátiles y efímeros: todo lo que almacena un contenedor dentro de su sistema de archivos se pierde si el contenedor se remueve
 - Si un contenedor no tiene trabajo, se detiene 
 *** Volúmenes
@@ -487,13 +487,15 @@ def logout(request):
      - -f: seguir impresiones en bitácora
    - docker exec: ejecutar un comando sobre el contenedor que está corriendo
      + docker exec -t -i contenedor bash: entrar a un contenedor en ejecución
-   - docker buil rutaDockerFile -t nombre: crear un una imagen a partir de un Dockerfile
+   - docker build rutaDockerFile -t nombre: crear un una imagen a partir de un Dockerfile
 
 ** Pasar un sistema a contenedores
 - Ya tenemos un sistema local
 - Establecer dependencias
   + Internas: framework, conector de bd
-  + Ambiente: manejador de BD, python, servidor web
+  + Ambiente: manejador de BD, python,servidor web
+- Crear archivo Dockerfile
+  + Basada en la imagen de Python
 *** Preparar la app para servidor web
 - Requisitos:
   + [X] App: básicamente el código del sistema
@@ -502,7 +504,7 @@ def logout(request):
 ** Seguridad en contenedores
 - Por defecto hay problemas de seguridad:
   + [-] Se utiliza root para todo
-    * [X] En el contenedor
+    * [X] En la app
     * [ ] En la bd (les toca investigar)
   + [X] Manejo de configuración sensible
   + [X] Uso de recursos: no hay por defecto medidas para mitigar DOS
