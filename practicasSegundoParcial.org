@@ -600,7 +600,7 @@ openssl req -new -key miDominio_key.pem -out miDominio_request.csr
   #+begin_src sh :session bash :results output :exports both :tangled /tmp/bash.sh
 openssl x509 -req -days 30 -in miDominio_request.csr -signkey miDominio_key.pem -out miDominio_cert.crt
   #+end_src
-- Ver resultado: openssl x509 -in miDominio_cert.crt -text
+- Ver resultado: openssl x509 -in miDominio_cert.crt -textr
 - Probar el certificado en un servidor de prueba:
     #+begin_src sh :session bash :results output :exports both :tangled /tmp/bash.sh
 openssl s_server -accept 8888 -www -cert miDominio_cert.crt -key miDominio_key.pem
@@ -608,6 +608,7 @@ openssl s_server -accept 8888 -www -cert miDominio_cert.crt -key miDominio_key.p
 **** Configurar NGINX: se asume que se utiliza el contenedor oficial de Docker
 - Obtener una copia de /etc/nginx/nginx.conf para editarla:
   + Correr un contenedor, luego mediante docker exec guardar la copia
+- Cuidado: la copia de nginx.conf debe quedar en otro directorio diferente al de local.cof, de lo contrario se va a sustituir local.conf por nginx.con (lo cual causa errores)    
 - Editar la copia de nginx.conf, agregando al final del bloque http:
     #+begin_src sh :session bash :results output :exports both :tangled /tmp/bash.sh
 ssl_certificate     /certs/miDominio_cert.crt;
