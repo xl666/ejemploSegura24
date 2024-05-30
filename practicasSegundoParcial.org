@@ -199,7 +199,27 @@
      - Los códigos de telegram deben ser aleatorios, deben expirar en
        3 minutos y deben poder ser utilizados sólo una vez
      - Si se pasa mal el token una vez, debe invalidarse todo el proceso
-
+*** Pruebas
+- Verificar caducidad de token: pasar usuario y contraseña, obtener
+  token pero no usarlo, esperar a que caduque, luego intentar
+  usarlo. Resultado: se reinicia el proceso de login
+- Verificar uso único: pasar usuario y contraseña, generar un primer
+  token, no lo van a usar; se regresan al login de usuario y
+  contraseña y generan otro token, luego intentan usar el primer token
+  (no debería haber expirado). Resultado: el token es inválido, se
+  reinicia el proceso de login
+- Acceso directo a formulario de token: si no se ha pasado el usuario
+  y contraseña de forma correcta, no debería ser posible pasar el
+  token en ninguna situación (incluyendo después de un reinicio del
+  proceso de login), si se intenta se debe redirigir a la
+  página de usuario y contraseña
+- Reuso de token: con dos navegadores, llegan al paso donde se pasa el
+  token, intentan usar el mismo token en ambos lados (el último que
+  les dio). Resultado: sólo
+  debería ser válido el acceso en el primer navegador donde se pasa el token.
+- Inicio normal: pasan usuario y contraseña y luego token en un tiempo
+  corto. Resultado: entran al sistema
+- Calidad de token: el token es aleatorio y suficientemente largo  
 * Almacenamiento de información sensible (29 abril, 2 mayo)
 ** Teoría
    - Password hashing (scrypt, bcrypt).
